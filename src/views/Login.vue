@@ -177,10 +177,6 @@ watch(showLoginForm, (newValue) => {
   }
 })
 
-onMounted(() => {
-  loadProfileImage()
-})
-
 function showUserLogin(userType) {
   selectedUserType.value = userType
   
@@ -247,8 +243,36 @@ async function handleLogin() {
     loading.value = false
   }
 }
-</script>
 
+function checkMobileAndAutoLogin() {
+  const isMobile = window.innerWidth <= 768;
+  
+  if (isMobile) {
+    // Auto-select Emerald user without needing to click the card
+    selectedUserType.value = 'studentA';
+    selectedUser.value = 'Emerald';
+    loginForm.value.email = 'emerald@finance.com';
+    loginForm.value.password = '';
+    loginError.value = '';
+    showLoginForm.value = true; // This shows the login form
+  }
+}
+
+// Updated onMounted to include mobile auto-login
+onMounted(() => {
+  loadProfileImage();
+  checkMobileAndAutoLogin(); // Add this line
+});
+
+// Handle window resize (in case user rotates their phone)
+window.addEventListener('resize', () => {
+  if (window.innerWidth <= 768 && !showLoginForm.value && !selectedUser.value) {
+    checkMobileAndAutoLogin();
+  }
+});
+
+
+</script>
 <style scoped>
 /* Your existing styles remain exactly the same */
 .login-container {
